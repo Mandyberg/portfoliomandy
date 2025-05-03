@@ -1,16 +1,31 @@
-*{
+@use "./styles/fonts.scss";
+@use "./styles/reset.scss";
+@use "./styles/variable.scss" as vars;
+
+
+$themes: (
+  light: (
+    base-purple: #E8E4ED,
+    base-dark-purble: #725F7F,
+    base-ruby-pink: #C77A8A,
+    header-text: #725F7F,
+    text: #725F7F,
+    svgs: #725F7F,
+  ),
+  dark: (
+    base-purple: #725F7F,
+    base-dark-purble: #E8E4ED,
+    base-ruby-pink: #ea9cac,
+    header-text: #E8E4ED,
+    text: #E8E4ED,
+    svgs: #E8E4ED,
+  ),
+);
+
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-}
-
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 // Experience
@@ -26,17 +41,21 @@
   #experience-canvas {
     height: 100%;
     width: 100%;
+    z-index: 2;
   }
 }
-
-//Modals
-.modal{
+// Modals
+.modal {
   position: absolute;
   top: 50%;
   left: 50%;
+  max-width: 1200px;
+  width: 90%;
   transform: translate(-50%, -50%);
-  font-size: 32px;
+  font-size: 2.2rem;
   z-index: 9999;
+  padding: 30px;
+  border-radius: 15px;
   display: none;
-  background-color: black;
+  border: 8px solid vars.$base-purple;
 }

@@ -5,6 +5,8 @@ import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import gsap from "gsap"
 
+
+/** ---------------------------------------------Scene setup------------------------------------------------ */
 const canvas = document.querySelector("#experience-canvas");
 const sizes = {
   width: window.innerWidth,
@@ -16,22 +18,27 @@ const modals = {
   about: document.querySelector(".modal.about"),
 };
 
-document.querySelectorAll(".modal-exit-button").forEach(button=>{
-  button.addEventListener("click" , (e)=>{
+let touchHappend = false;
+document.querySelectorAll(".modal-exit-button").forEach(button => {
+  button.addEventListener("touchend", (e) => {
+    touchHappend = true;
+    e.preventDefault();
     const modal = e.target.closest(".modal");
     hideModal(modal);
-  });
+  }, { passive: false });
+
+  button.addEventListener("click", (e) => {
+    if (touchHappend) return;
+    e.preventDefault();
+    const modal = e.target.closest(".modal");
+    hideModal(modal);
+  }, { passive: false });
 });
 
 const showModal = (modal) => {
-  modal.style.display = "block"
-
-  gsap.set(modal, {opacity: 0});
-
-  gsap.to(modal, {
-    opacity: 1,
-    duration: 0.5,
-  });
+  modal.style.display = "block";
+  gsap.set(modal, { opacity: 0 });
+  gsap.to(modal, { opacity: 1, duration: 0.5 });
 };
 
 const hideModal = (modal) => {
@@ -44,12 +51,12 @@ const hideModal = (modal) => {
   });
 };
 
-const zAxisHowl = []
-const yAxisHowl = []
-const xAxisHowl = []
-
+const zAxisHowl = [];
+const yAxisHowl = [];
+const xAxisHowl = [];
 const raycasterObjects = [];
 let currentIntersects = [];
+let currentHoveredObject = null;
 
 const socialLinks = {
   "Linked": "https://www.linkedin.com/in/mandy-van-den-berg/", 
@@ -62,11 +69,8 @@ const pointer = new THREE.Vector2();
 
 // Loaders
 const textureLoader = new THREE.TextureLoader();
-
-//Model Loader
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath("/draco/");
-
 const loader = new GLTFLoader();
 loader.setDRACOLoader(dracoLoader);
 
@@ -96,27 +100,39 @@ const loadedTextures = {
 
 Object.entries(textureMap).forEach(([key, paths]) => {
   const dayTexture = textureLoader.load(paths.day);
-  dayTexture.flipY = false
+  dayTexture.flipY = false;
   dayTexture.colorSpace = THREE.SRGBColorSpace;
   loadedTextures.day[key] = dayTexture;
 
   const nightTexture = textureLoader.load(paths.night);
-  nightTexture.flipY = false
+  nightTexture.flipY = false;
   nightTexture.colorSpace = THREE.SRGBColorSpace;
   loadedTextures.night[key] = nightTexture;
 });
 
-window.addEventListener("mousemove", (e)=> {
+window.addEventListener("mousemove", (e) => {
+  touchHappend = false;
   pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
-	pointer.y = - (e.clientY / window.innerHeight) * 2 + 1;
+  pointer.y = - (e.clientY / window.innerHeight) * 2 + 1;
 });
 
-window.addEventListener("click", (e)=> {
-  if (currentIntersects.length> 0){
+window.addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  pointer.x = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
+  pointer.y = - (e.touches[0].clientY / window.innerHeight) * 2 + 1;
+}, { passive: false });
+
+window.addEventListener("touchend", (e) => {
+  e.preventDefault();
+  handleRaycasterInteraction();
+}, { passive: false });
+
+function handleRaycasterInteraction() {
+  if (currentIntersects.length > 0) {
     const object = currentIntersects[0].object;
 
     Object.entries(socialLinks).forEach(([key, url]) => {
-      if(object.name.includes(key)) {
+      if (object.name.includes(key)) {
         const newWindow = window.open();
         newWindow.opener = null;
         newWindow.location = url;
@@ -127,23 +143,128 @@ window.addEventListener("click", (e)=> {
 
     if (object.name.includes("Button_My_Work")) {
       showModal(modals.work);
-    }else if (object.name.includes("Button_About")) {
+    } else if (object.name.includes("Button_About")) {
       showModal(modals.about);
     }
   }
+};
+
+window.addEventListener("click", handleRaycasterInteraction);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(35, sizes.width / sizes.height, 0.1, 1000);
+camera.position.set(14.878830056186674, 4.817340198638351, 11.419435204022996);
+
+const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+renderer.setSize(sizes.width, sizes.height);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.target.set(-0.1292503276082901, 1.2583773474329245, -0.33672136892309645);
+controls.update();
+
+window.addEventListener("resize", () => {
+  sizes.width = window.innerWidth;
+  sizes.height = window.innerHeight;
+  camera.aspect = sizes.width / sizes.height;
+  camera.updateProjectionMatrix();
+  renderer.setSize(sizes.width, sizes.height);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 });
 
-loader.load("/models/Portfolio_Mandy_World_v4.glb", (glb)=>{
+let howlState = "waiting";
+let stateTimer = 0;
+const waitDuration = 400;
+const rotateDuration = 190;
+const jumpDuration = 60;
+let jumpStart = 0;
+let jumpTarget = 0;
 
-  glb.scene.traverse((child) => {
-    if(child.isMesh){
-      
-      if (child.name.includes("_Raycaster")) {
-      raycasterObjects.push(child);
+function playHoverAnimation(object, isHovering) {
+  gsap.killTweensOf(object.scale);
+  gsap.killTweensOf(object.rotation);
+  gsap.killTweensOf(object.position);
+
+  const name = object.name;
+  
+  if (isHovering) {
+    // V2 animatie (zoals het nu is)
+    if (name.includes("HoverV2")) {
+      gsap.to(object.scale, {
+        x: object.userData.initialScale.x * 1.1,
+        y: object.userData.initialScale.y * 1.1,
+        z: object.userData.initialScale.z * 1.1,
+        duration: 0.5,
+        ease: "back.out(2)",
+      });
+      gsap.to(object.position, {
+        z: object.userData.initialPosition.z + 0.2,
+        duration: 0.5,
+        ease: "back.out(2)",
+      });
     }
 
-      Object.keys(textureMap).forEach((key)=>{
-        if(child.name.includes(key)){
+    // V3 animatie
+    if (name.includes("HoverV3")) {
+      gsap.to(object.scale, {
+        x: object.userData.initialScale.x * 1.2,
+        y: object.userData.initialScale.y * 1.2,
+        z: object.userData.initialScale.z * 1.2,
+        duration: 0.5,
+        ease: "back.out(2)",
+      });
+      gsap.to(object.rotation, {
+        y: object.userData.initialRotation.y + 0,
+        duration: 0.5,
+        ease: "back.out(2)",
+      });
+    }
+
+  } else {
+    // Terug naar oorspronkelijke staat
+    gsap.to(object.scale, {
+      x: object.userData.initialScale.x,
+      y: object.userData.initialScale.y,
+      z: object.userData.initialScale.z,
+      duration: 0.3,
+      ease: "back.out(2)",
+    });
+    gsap.to(object.position, {
+      z: object.userData.initialPosition.z,
+      duration: 0.3,
+      ease: "back.out(2)",
+    });
+    gsap.to(object.rotation, {
+      y: object.userData.initialRotation.y,
+      duration: 0.3,
+      ease: "back.out(2)",
+    });
+  }
+}
+
+loader.load("/models/Portfolio_Mandy_World_v7.glb", (glb) => {
+  glb.scene.traverse((child) => {
+    if (child.isMesh) {
+      if (child.name.includes("_Raycaster")) {
+        raycasterObjects.push(child);
+      }
+
+      if (child.name.includes("HoverV2")) {
+        child.userData.initialScale = new THREE.Vector3().copy(child.scale);
+        child.userData.initialPosition = new THREE.Vector3().copy(child.position);
+        child.userData.initialRotation = new THREE.Euler().copy(child.rotation);
+      }
+
+      if (child.name.includes("HoverV3")) {
+        child.userData.initialScale = new THREE.Vector3().copy(child.scale);
+        child.userData.initialPosition = new THREE.Vector3().copy(child.position);
+        child.userData.initialRotation = new THREE.Euler().copy(child.rotation);
+      }
+
+      Object.keys(textureMap).forEach((key) => {
+        if (child.name.includes(key)) {
           const material = new THREE.MeshBasicMaterial({
             map: loadedTextures.day[key],
           });
@@ -151,13 +272,10 @@ loader.load("/models/Portfolio_Mandy_World_v4.glb", (glb)=>{
           child.material = material;
 
           if (child.name.includes("Howls")) {
-            if (child.name.includes("Howls")
-            ){
-          zAxisHowl.push(child);
+            zAxisHowl.push(child);
           }
-        }
 
-          if(child.material.map){
+          if (child.material.map) {
             child.material.map.minFilter = THREE.LinearFilter;
           }
         }
@@ -167,91 +285,29 @@ loader.load("/models/Portfolio_Mandy_World_v4.glb", (glb)=>{
   scene.add(glb.scene);
 });
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera( 
-  35, 
-  sizes.width / sizes.height, 
-  0.1, 
-  1000 
-);
-camera.position.set(
-  14.878830056186674, 
-  4.817340198638351, 
-  11.419435204022996
-);
-
-const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
-renderer.setSize(sizes.width, sizes.height);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-const controls = new OrbitControls( camera, renderer.domElement );
-controls.enableDamping = true;
-controls.dampingFactor = 0.05;
-controls.update();
-controls.target.set(
-  -0.1292503276082901, 
-  1.2583773474329245, 
-  -0.33672136892309645
-);
-
-//Event Listeners
-window.addEventListener("resize", ()=>{
-  sizes.width = window.innerWidth;
-  sizes.height = window.innerHeight;
-
-  //Update Camera
-  camera.aspect = sizes.width / sizes.height;
-  camera.updateProjectionMatrix();
-
-  // Update renderer
-  renderer.setSize( sizes.width, sizes.height );
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2 ));
-});
-
-// onderstaande state machine - code verbeterd met Chat GPT
-
-let howlState = "waiting"; // 'waiting' → 'rotating' → 'jumping' → 'waiting' ...
-let stateTimer = 0;
-
-const waitDuration = 400;    // frames dat hij stilstaat (~2 sec bij 60fps)
-const rotateDuration = 190;  // frames dat hij rechts draait
-const jumpDuration = 60;     // frames waarin hij vloeiend 45 graden terugdraait
-
-let jumpStart = 0;
-let jumpTarget = 0;
-
 const render = () => {
   controls.update();
 
   zAxisHowl.forEach((howl) => {
     switch (howlState) {
       case "waiting":
-        // doe niks, laat schijf stil staan
         if (stateTimer >= waitDuration) {
           howlState = "rotating";
           stateTimer = 0;
         }
         break;
-
       case "rotating":
-        // langzaam naar rechts draaien
-        howl.rotation.z += 0.003; // Dit bepaalt de snelheid van de rotatie.
-
-        // Na 'rotateDuration' frames begint hij met springen
+        howl.rotation.z += 0.003;
         if (stateTimer >= rotateDuration) {
           howlState = "jumping";
           jumpStart = howl.rotation.z;
-          jumpTarget = jumpStart - THREE.MathUtils.degToRad(123); // spring 45 graden terug
+          jumpTarget = jumpStart - THREE.MathUtils.degToRad(123);
           stateTimer = 0;
         }
         break;
-
       case "jumping":
-        // vloeiend draaien naar de doelrotatie (45 graden terug)
         const t = stateTimer / jumpDuration;
         howl.rotation.z = THREE.MathUtils.lerp(jumpStart, jumpTarget, t);
-
-        // Na de sprong wacht de schijf weer
         if (stateTimer >= jumpDuration) {
           howlState = "waiting";
           stateTimer = 0;
@@ -262,24 +318,46 @@ const render = () => {
 
   stateTimer++;
 
-  // Raycaster
-  raycaster.setFromCamera( pointer, camera );
+  raycaster.setFromCamera(pointer, camera);
+  currentIntersects = raycaster.intersectObjects(raycasterObjects);
 
-	// calculate objects intersecting the picking ray
-	currentIntersects = raycaster.intersectObjects(raycasterObjects);
+  if (currentIntersects.length > 0) {
+    const currentIntersectObject = currentIntersects[0].object;
 
-	for ( let i = 0; i < currentIntersects.length; i ++ ) {
-	}
-  
-  if (currentIntersects.length > 0 && currentIntersects[0].object.name.includes("Pointer")) {
-    document.body.style.cursor = "pointer";
+    if (currentIntersectObject.name.includes("HoverV2")) {
+      if (currentIntersectObject !== currentHoveredObject) {
+        if (currentHoveredObject) {
+          playHoverAnimation(currentHoveredObject, false);
+        }
+        playHoverAnimation(currentIntersectObject, true);
+        currentHoveredObject = currentIntersectObject;
+      }
+    }
+
+    if (currentIntersectObject.name.includes("HoverV3")) {
+      if (currentIntersectObject !== currentHoveredObject) {
+        if (currentHoveredObject) {
+          playHoverAnimation(currentHoveredObject, false);
+        }
+        playHoverAnimation(currentIntersectObject, true);
+        currentHoveredObject = currentIntersectObject;
+      }
+    }
+
+    if (currentIntersectObject.name.includes("Pointer")) {
+      document.body.style.cursor = "pointer";
+    } else {
+      document.body.style.cursor = "default";
+    }
   } else {
+    if (currentHoveredObject) {
+      playHoverAnimation(currentHoveredObject, false);
+      currentHoveredObject = null;
+    }
     document.body.style.cursor = "default";
   }
-  
- 
-  renderer.render( scene, camera );
 
+  renderer.render(scene, camera);
   window.requestAnimationFrame(render);
 };
 
