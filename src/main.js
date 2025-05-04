@@ -1,12 +1,16 @@
 import './style.scss'
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { OrbitControls } from './utils/OrbitControls.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import gsap from "gsap"
 
+/**  -------------------------- Audio setup -------------------------- */
 
-/** ---------------------------------------------Scene setup------------------------------------------------ */
+// moet nog komen. 
+
+
+/** ----------------------------Scene setup-------------------------------- */
 const canvas = document.querySelector("#experience-canvas");
 const sizes = {
   width: window.innerWidth,
@@ -17,6 +21,66 @@ const modals = {
   work: document.querySelector(".modal.work"),
   about: document.querySelector(".modal.about"),
 };
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(35, sizes.width / sizes.height, 0.1, 1000);
+
+const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+renderer.setSize(sizes.width, sizes.height);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.minDistance = 8;
+controls.maxDistance = 25;
+controls.minPolarAngle = 0;
+controls.maxPolarAngle = Math.PI / 2;
+controls.minAzimuthAngle = -0.8;
+controls.maxAzimuthAngle = Math.PI / 1.2;
+
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+
+
+controls.update();
+
+//Set starting camera position
+if (window.innerWidth < 768) {
+  camera.position.set(
+    4.255816354890382,
+    3.7801235321991182,
+    23.16581973654613
+  );
+  controls.target.set(
+    -2.1824645696469567,
+    1.5394316514922293,
+    -0.17525163814624226
+  );
+} else {
+  camera.position.set(
+    12.562337674469752, 
+    3.360207618340808, 
+    8.926306254456454);
+  controls.target.set(
+    0.8131327153401671,
+    1.1040596411764165,
+    -0.6394363206917698
+  );
+}
+
+window.addEventListener("resize", () => {
+  sizes.width = window.innerWidth;
+  sizes.height = window.innerHeight;
+
+  // Update Camera
+  camera.aspect = sizes.width / sizes.height;
+  camera.updateProjectionMatrix();
+
+  // Update renderer
+  renderer.setSize(sizes.width, sizes.height);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+});
+
+/**-----------------------------------End Scene setup------------------------------------------*/
 
 let touchHappend = false;
 document.querySelectorAll(".modal-exit-button").forEach(button => {
@@ -161,28 +225,7 @@ function handleRaycasterInteraction() {
 
 window.addEventListener("click", handleRaycasterInteraction);
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(35, sizes.width / sizes.height, 0.1, 1000);
-camera.position.set(14.878830056186674, 4.817340198638351, 11.419435204022996);
 
-const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
-renderer.setSize(sizes.width, sizes.height);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.dampingFactor = 0.05;
-controls.target.set(-0.1292503276082901, 1.2583773474329245, -0.33672136892309645);
-controls.update();
-
-window.addEventListener("resize", () => {
-  sizes.width = window.innerWidth;
-  sizes.height = window.innerHeight;
-  camera.aspect = sizes.width / sizes.height;
-  camera.updateProjectionMatrix();
-  renderer.setSize(sizes.width, sizes.height);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-});
 
 let howlState = "waiting";
 let stateTimer = 0;
@@ -298,6 +341,10 @@ loader.load("/models/Portfolio_Mandy_World_v7.glb", (glb) => {
 const render = () => {
   controls.update();
 
+  // console.log(camera.position);
+  // console.log("0000000000000");
+  // console.log(controls.target);
+  
   zAxisHowl.forEach((howl) => {
     switch (howlState) {
       case "waiting":
