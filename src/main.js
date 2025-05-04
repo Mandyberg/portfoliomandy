@@ -36,17 +36,26 @@ document.querySelectorAll(".modal-exit-button").forEach(button => {
 });
 
 const showModal = (modal) => {
-  modal.style.display = "block";
-  gsap.set(modal, { opacity: 0 });
-  gsap.to(modal, { opacity: 1, duration: 0.5 });
+  modal.style.display = "flex";
+  gsap.set(modal, { opacity: 0, scale: 0.2 });
+  gsap.to(modal, {
+    opacity: 1,
+    scale: 1,
+    duration: 0.6,
+    ease: "back.out(1.7)"
+  });
+  document.body.style.overflow = 'hidden';
 };
 
 const hideModal = (modal) => {
   gsap.to(modal, {
     opacity: 0,
-    duration: 0.5,
+    scale: 0.2,
+    duration: 0.4,
+    ease: "power1.inOut",
     onComplete: () => {
       modal.style.display = "none";
+      document.body.style.overflow = '';
     },
   });
 };
@@ -148,6 +157,7 @@ function handleRaycasterInteraction() {
     }
   }
 };
+
 
 window.addEventListener("click", handleRaycasterInteraction);
 
