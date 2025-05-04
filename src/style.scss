@@ -34,7 +34,6 @@ h1 {
   margin-bottom: 1rem;
 }
 
-// EXPERIENCE CANVAS (achtergrond)
 #experience {
   position: fixed;
   height: 100%;
@@ -81,17 +80,18 @@ h1 {
   transform: translate(-50%, -50%);
   background-color: #E8E4ED;
   padding: 3rem;
-  border-radius: 20px;
+  border-radius: 15px;
   max-width: 1000px;
   width: 90%;
   max-height: 90vh;
-  overflow-y: auto;
+  flex-shrink: 0;
+  overflow: auto;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   z-index: 1000;
 
   @media (max-width: 768px) {
-    padding: 2rem;
-  }
+    padding:2rem
+    }
 }
 
 // CONTAINER BINNEN MODAL
@@ -186,4 +186,8 @@ h1 {
 
   align-self: center;
   margin-top: 2rem;
+
+  // Zorg ervoor dat het niet vervormt
+  min-width: 60px;
+  min-height: 60px;
 }
