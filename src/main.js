@@ -31,7 +31,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.minDistance = 8;
-controls.maxDistance = 25;
+controls.maxDistance = 35;
 controls.minPolarAngle = 0;
 controls.maxPolarAngle = Math.PI / 2;
 controls.minAzimuthAngle = -0.8;
@@ -140,7 +140,7 @@ const socialLinks = {
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 
-// Loaders
+/**----------------------------Loaders & Texture ------------------------------------------------------- */
 const textureLoader = new THREE.TextureLoader();
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath("/draco/");
@@ -227,6 +227,7 @@ window.addEventListener("click", handleRaycasterInteraction);
 
 
 
+/** ----------------------------------------------Animation--------------------------- */
 let howlState = "waiting";
 let stateTimer = 0;
 const waitDuration = 400;
@@ -375,6 +376,8 @@ const render = () => {
 
   stateTimer++;
 
+
+  /**-------------------------------Raycaster setup--------------------------------------------------- */
   raycaster.setFromCamera(pointer, camera);
   currentIntersects = raycaster.intersectObjects(raycasterObjects);
 
