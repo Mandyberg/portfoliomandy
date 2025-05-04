@@ -23,6 +23,7 @@ body {
   margin: 0;
   padding: 2rem;
   overflow-x: hidden;
+  overflow-y: auto;
 }
 
 h1 {
@@ -90,7 +91,10 @@ h1 {
   z-index: 1000;
 
   @media (max-width: 768px) {
-    padding:2rem
+    width: 90%;
+    height: auto;
+    padding:2rem;
+    max-height: 80vh;
     }
 }
 
