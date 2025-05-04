@@ -35,7 +35,7 @@ controls.maxDistance = 25;
 controls.minPolarAngle = 0;
 controls.maxPolarAngle = Math.PI / 2;
 controls.minAzimuthAngle = -0.8;
-controls.maxAzimuthAngle = Math.PI / 1.2;
+controls.maxAzimuthAngle = Math.PI / 0;
 
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
