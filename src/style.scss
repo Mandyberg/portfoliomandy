@@ -3,25 +3,6 @@
 @use "./styles/variable.scss" as vars;
 
 
-$themes: (
-  light: (
-    base-purple: #E8E4ED,
-    base-dark-purble: #725F7F,
-    base-ruby-pink: #C77A8A,
-    header-text: #725F7F,
-    text: #725F7F,
-    svgs: #725F7F,
-  ),
-  dark: (
-    base-purple: #725F7F,
-    base-dark-purble: #E8E4ED,
-    base-ruby-pink: #ea9cac,
-    header-text: #E8E4ED,
-    text: #E8E4ED,
-    svgs: #E8E4ED,
-  ),
-);
-
 * {
   margin: 0;
   padding: 0;
