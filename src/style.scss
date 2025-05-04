@@ -30,7 +30,7 @@ h1 {
   font-family: 'Spectral', serif;
   font-weight: 800;
   font-size: 40px;
-  color: #5e3b7d;
+  color: #725F7F;
   text-align: center;
   margin-bottom: 1rem;
 }
@@ -84,17 +84,31 @@ h1 {
   max-width: 1000px;
   width: 90%;
   height: auto;
-  flex-shrink: 0;
-  overflow-y: auto;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  overflow-y: auto;  // Zorg ervoor dat de modal scrollbaar is als de inhoud groter is
+
+  // Scrollbar styling
+  &::-webkit-scrollbar {
+    width: 8px; // Stel de breedte van de scrollbar in
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #725F7F; // De kleur van de schuifknop
+    border-radius: 4px;  // Maak de schuifknop afgerond
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: #E8E4ED;  // Achtergrondkleur van de scrollbar
+    border-radius: 4px;
+  }
+
   z-index: 1000;
 
   @media (max-width: 768px) {
     width: 90%;
     height: auto;
-    padding:2rem;
+    padding: 2rem;
     max-height: 80vh;
-    }
+  }
 }
 
 // CONTAINER BINNEN MODAL
@@ -156,7 +170,7 @@ h1 {
     font-family: 'Spectral', serif;
     font-weight: 800;
     font-size: 40px;
-    color: #5e3b7d;
+    color: #725F7F;
     margin-bottom: 1rem;
     text-align: center;
   }
@@ -174,7 +188,7 @@ h1 {
 
 // EXIT-KNOP ONDERAAN & GECENTREERD
 .modal-exit-button {
-  background-color: #5e3b7d;
+  background-color: #725F7F;
   color: #E8E4ED;
   font-size: 2rem;
   border: none;
