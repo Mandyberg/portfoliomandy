@@ -2,15 +2,40 @@
 @use "./Styles/reset.scss";
 @use "./Styles/variable.scss" as vars;
 
+// GLOBAL RESET
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-// Experience
+:root {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-#experience{
+body {
+  background-color: #E8E4ED;
+  font-family: 'Karla', sans-serif;
+  color: #725F7F;
+  margin: 0;
+  padding: 2rem;
+  overflow-x: hidden;
+}
+
+h1 {
+  font-family: 'Spectral', serif;
+  font-weight: 800;
+  font-size: 40px;
+  color: #5e3b7d;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+// EXPERIENCE CANVAS (achtergrond)
+#experience {
   position: fixed;
   height: 100%;
   width: 100%;
@@ -24,18 +49,139 @@
     z-index: 2;
   }
 }
-// Modals
+
+// ALGEMENE MODAL-STIJL
 .modal {
-  position: absolute;
+  display: none;
+  position: fixed;
   top: 50%;
   left: 50%;
+  transform: translate(-50%, -50%);
   max-width: 1200px;
   width: 90%;
-  transform: translate(-50%, -50%);
-  font-size: 2.2rem;
   z-index: 9999;
   padding: 30px;
   border-radius: 15px;
+  font-size: 2.2rem;
+  background-color: vars.$base-purple;
+  overflow-y: auto;
+  max-height: 90vh;
+}
+
+// ABOUT MODAL SPECIFIEK
+.about.modal {
   display: none;
-  border: 8px solid vars.$base-purple;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #E8E4ED;
+  padding: 3rem;
+  border-radius: 20px;
+  max-width: 1000px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+
+  @media (max-width: 768px) {
+    padding: 2rem;
+  }
+}
+
+// CONTAINER BINNEN MODAL
+.about-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+// INHOUD IN TWEE KOLOMMEN
+.about-content {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+// LINKERKOLOM: FOTO + ITALIC
+.about-image {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 260px;
+  flex: 1;
+
+  img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .italic-text {
+    font-family: 'Karla', sans-serif;
+    font-weight: 500;
+    font-style: italic;
+    font-size: 16px;
+    line-height: 19px;
+    color: #725F7F;
+    text-align: left;
+    margin-top: 1rem;
+  }
+}
+
+// RECHTERKOLOM: HI! + PARAGRAFEN
+.about-text {
+  flex: 2;
+
+  h1 {
+    font-family: 'Spectral', serif;
+    font-weight: 800;
+    font-size: 40px;
+    color: #5e3b7d;
+    margin-bottom: 1rem;
+    text-align: left;
+  }
+
+  p {
+    font-family: 'Karla', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    margin-bottom: 1rem;
+    color: #725F7F;
+    text-align: left;
+  }
+}
+
+// EXIT-KNOP ONDERAAN & GECENTREERD
+.modal-exit-button {
+  background-color: #5e3b7d;
+  color: #E8E4ED;
+  font-size: 2rem;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  align-self: center;
+  margin-top: 2rem;
 }
