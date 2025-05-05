@@ -2,19 +2,12 @@
 @use "./Styles/reset.scss";
 @use "./Styles/variable.scss" as vars;
 
-// GLOBAL RESET
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-:root {
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
 
 body {
   background-color: #E8E4ED;
@@ -23,16 +16,14 @@ body {
   margin: 0;
   padding: 2rem;
   overflow-x: hidden;
-  overflow-y: auto;
+  
 }
 
-h1 {
-  font-family: 'Spectral', serif;
-  font-weight: 800;
-  font-size: 40px;
-  color: #725F7F;
-  text-align: center;
-  margin-bottom: 1rem;
+:root {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #experience {
@@ -49,6 +40,16 @@ h1 {
     z-index: 2;
   }
 }
+
+h1 {
+  font-family: 'Spectral', serif;
+  font-weight: 800;
+  font-size: 40px;
+  color: #725F7F;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
 
 // ALGEMENE MODAL-STIJL
 .modal {
@@ -108,7 +109,7 @@ h1 {
     height: auto;
     padding: 2rem;
     max-height: 70vh;
-    top: 15%;  // Verplaats de modal iets naar beneden om te zorgen dat de inhoud goed zichtbaar is
+    top: 50%;  // Verplaats de modal iets naar beneden om te zorgen dat de inhoud goed zichtbaar is
     transform: translate(-50%, 0);
   }
 }
