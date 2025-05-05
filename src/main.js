@@ -22,6 +22,8 @@ const modals = {
   about: document.querySelector(".modal.about"),
 };
 
+const overlay = document.querySelector(".overlay");
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(35, sizes.width / sizes.height, 0.1, 1000);
 

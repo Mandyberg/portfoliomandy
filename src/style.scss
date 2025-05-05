@@ -105,12 +105,13 @@ h1 {
   z-index: 1000;
 
   @media (max-width: 768px) {
+    position: fixed;
     width: 90%;
     height: auto;
     padding: 2rem;
     max-height: 70vh;
-    top: 50%;  // Verplaats de modal iets naar beneden om te zorgen dat de inhoud goed zichtbaar is
-    transform: translate(-50%, 0);
+    top: 20%;  // Verplaats de modal iets naar beneden om te zorgen dat de inhoud goed zichtbaar is
+    transform: translate(-50%, 0%);
   }
 }
 
@@ -214,4 +215,186 @@ h1 {
   &:hover {
     background-color: #4e3b5b;
   }
+
+  // Zorg ervoor dat het niet vervormt
+  min-width: 60px;
+  min-height: 60px;
+
+  &:hover {
+    background-color: #4e3b5b;
+  }
 }
+
+// WORK MODAL SPECIFIEK
+.work.modal {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #E8E4ED;
+  padding: 3rem;
+  border-radius: 15px;
+  max-width: 1000px;
+  width: 90%;
+  height: auto;
+  overflow-y: auto;  // Zorg ervoor dat de modal scrollbaar is als de inhoud groter is
+
+  // Scrollbar styling
+  &::-webkit-scrollbar {
+    width: 8px; // Stel de breedte van de scrollbar in
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #725F7F; // De kleur van de schuifknop
+    border-radius: 4px;  // Maak de schuifknop afgerond
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: #E8E4ED;  // Achtergrondkleur van de scrollbar
+    border-radius: 4px;
+  }
+
+  z-index: 1000;
+
+  @media (max-width: 768px) {
+    position: fixed;
+    width: 90%;
+    height: auto;
+    padding: 2rem;
+    max-height: 70vh;
+    top: 20%;  // Verplaats de modal iets naar beneden om te zorgen dat de inhoud goed zichtbaar is
+    transform: translate(-50%, 0%);
+  }
+}
+
+// CONTAINER BINNEN WORK MODAL
+.work-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+// WORK CONTENT
+.work-content {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+// 3 AFBEELDINGEN IN EEN RIJ
+.work-images-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+
+  img {
+    width: 32%;  // Elke afbeelding neemt 32% van de breedte in
+    height: auto;  // De hoogte wordt automatisch ingesteld om de verhouding vierkant te houden
+    aspect-ratio: 1;  // Zorgt ervoor dat de afbeeldingen vierkant blijven
+    object-fit: cover;  // Zorgt ervoor dat de afbeelding de ruimte opvult zonder vervorming
+    border-radius: 10px;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+
+    img {
+      width: 100%;
+      height: auto;
+      max-width: 300px;  // Maximaal 300px breedte voor kleinere schermen
+      aspect-ratio: 1;  // Houd de vierkante verhouding vast
+      margin-bottom: 1rem;
+    }
+  }
+}
+
+.smell-of-divine {
+  width: 600px;  // Maak de afbeelding breder dan de andere
+  height: 400px;
+  margin-left: auto;  // Centreer de afbeelding in de container
+  margin-right: auto;
+  object-fit: cover;  // Zorg ervoor dat de afbeelding goed in de container past
+  border-radius: 10px;
+  z-index: 1000;  // Zorg ervoor dat de afbeelding boven andere elementen ligt
+
+  @media (max-width: 768px) {
+    width: 100%;  // Maak de afbeelding 100% breed op kleine schermen
+    max-width: 400px;  // Zorg ervoor dat de afbeelding niet te groot wordt op kleinere schermen
+    height: auto;
+  }
+}
+
+// RECHTERKOLOMM: EXTRA TEXT
+.work-text {
+  flex: 2;
+  margin-top: 2rem;
+
+  h1 {
+    font-family: 'Spectral', serif;
+    font-weight: 800;
+    font-size: 40px;
+    color: #725F7F;
+    margin-bottom: 1rem;
+    text-align: left;
+  }
+
+  p {
+    font-family: 'Karla', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    margin-bottom: 1rem;
+    color: #725F7F;
+    text-align: left;
+  }
+
+  .italic-text {
+    font-family: 'Karla', sans-serif;
+    font-weight: 500;
+    font-style: italic;
+    font-size: 25px;
+    line-height: 24px;
+    color: #725F7F;
+    text-align: left;
+    margin-top: 2rem;
+  }
+}
+
+// EXIT-KNOP, VAST BOVENIN
+.modal-exit-button {
+  background-color: #725F7F;
+  color: #E8E4ED;
+  font-size: 2rem;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  align-self: center;
+  margin-top: 2rem;
+
+  z-index: 1001;  // Zorg ervoor dat de knop boven de modal staat
+
+  &:hover {
+    background-color: #4e3b5b;
+  }
+}
+
+
