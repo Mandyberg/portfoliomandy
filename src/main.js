@@ -32,8 +32,8 @@ renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.minDistance = 8;
-controls.maxDistance = 35;
+controls.minDistance = 7;
+controls.maxDistance = 25;
 controls.minPolarAngle = 0;
 controls.maxPolarAngle = Math.PI / 2;
 controls.minAzimuthAngle = -0.8;
