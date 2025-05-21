@@ -136,7 +136,7 @@ let currentHoveredObject = null;
 const socialLinks = {
   "Linked": "https://www.linkedin.com/in/mandy-van-den-berg/", 
   "Insta" : "https://www.instagram.com/mandyvanden_berg/",
-  "Mail" : "mailto:info@mandyvandenberg.com",
+  "Mail" : "mailto:mandyvdb1@live.nl",
 };
 
 const raycaster = new THREE.Raycaster();
@@ -192,13 +192,13 @@ window.addEventListener("mousemove", (e) => {
 });
 
 window.addEventListener("touchstart", (e) => {
-  //e.preventDefault();
+//e.preventDefault();
   pointer.x = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
   pointer.y = - (e.touches[0].clientY / window.innerHeight) * 2 + 1;
 }, { passive: false });
 
 window.addEventListener("touchend", (e) => {
-  //e.preventDefault();
+//e.preventDefault();
   handleRaycasterInteraction();
 }, { passive: false });
 
